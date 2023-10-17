@@ -25,6 +25,10 @@
   text-transform: capitalize;
 }
 
+.link_terms {
+  text-decoration: underline;
+}
+
 .link:hover {
   color: var(--white);
 }
