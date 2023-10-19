@@ -7,6 +7,7 @@ import Header from './Header/Header';
 import SideBar from './SideBar/SideBar';
 import AppRoutes from './AppRoutes/AppRoutes';
 import Footer from './Footer/Footer';
+import UserForm from './User/UserForm';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const App = () => {
     return (
         <div className='app'>
             <Header />
+            <UserForm />
 
             <div className='container'>
                 <SideBar />
