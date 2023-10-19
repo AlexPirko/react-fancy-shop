@@ -86,6 +86,7 @@ section {
 }
 
 button {
+  width: fit-content;
   background: var(--violet-dark);
   border-radius: 6px;
   padding: 9px 20px;
