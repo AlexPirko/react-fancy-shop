@@ -18,28 +18,43 @@ const Category = () => {
 
     const defaultParams = {
         categoryId: id,
+        limit: 5,
+        offset: 0,
         ...defaultValues,
     };
 
-    const [categ, setCateg] = useState('');
+    const [categ, setCateg] = useState(null);
+    const [isEnd, setIsEnd] = useState(false);
+    const [items, setItems] = useState([]);
     const [values, setValues] = useState(defaultValues);
     const [params, setParams] = useState(defaultParams);
+
+    const { data = [], isLoading, isSuccess } = useGetProductsQuery(params);
 
     useEffect(() => {
         if (!id) return;
 
+        setValues(defaultValues);
+        setItems([]);
+        setIsEnd(false);
         setParams({ ...defaultParams, categoryId: id });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     useEffect(() => {
+        if (isLoading) return;
+
+        if (!data.length) return setIsEnd(true);
+
+        setItems((_items) => [..._items, ...data]);
+    }, [data, isLoading]);
+
+    useEffect(() => {
         if (!id || !list.length) return;
 
-        const { name } = list.find((item) => item.id === +id);
-        setCateg(name);
+        const category = list.find((item) => item.id === +id);
+        setCateg(category);
     }, [list, id]);
-
-    const { data, isLoading, isSuccess } = useGetProductsQuery(params);
 
     const handleChange = ({ target: { value, name } }) => {
         setValues({ ...values, [name]: value });
@@ -47,12 +62,20 @@ const Category = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setItems([]);
+        setIsEnd(false);
         setParams({ ...defaultParams, ...values });
+    };
+
+    const handleReset = () => {
+        setValues(defaultValues);
+        setParams(defaultParams);
+        setIsEnd(false);
     };
 
     return (
         <section className={styles.wrapper}>
-            <h2 className={styles.title}>{categ}</h2>
+            <h2 className={styles.title}>{categ?.name}</h2>
 
             <form className={styles.filters} onSubmit={handleSubmit}>
                 <div className={styles.filter}>
@@ -72,6 +95,7 @@ const Category = () => {
                         placeholder='0'
                         value={values.price_min}
                     />
+                    <span>Price from</span>
                 </div>
                 <div className={styles.filter}>
                     <input
@@ -81,6 +105,7 @@ const Category = () => {
                         placeholder='0'
                         value={values.price_max}
                     />
+                    <span>Price to</span>
                 </div>
 
                 <button type='submit' hidden></button>
@@ -88,13 +113,20 @@ const Category = () => {
 
             {isLoading ? (
                 <div className={styles.preloader}>Loading...</div>
-            ) : !isSuccess || !data.length ? (
+            ) : !isSuccess || !items.length ? (
                 <div className={styles.back}>
                     <span>No results</span>
-                    <button>Reset</button>
+                    <button onClick={handleReset}>Reset</button>
                 </div>
             ) : (
-                <Products title='' products={data} style={{ padding: 0 }} amount={data.length} />
+                <Products title='' products={items} style={{ padding: 0 }} amount={items.length} />
+            )}
+            {!isEnd && (
+                <div className={styles.more}>
+                    <button onClick={() => setParams({ ...params, offset: params.offset + params.limit })}>
+                        See more
+                    </button>
+                </div>
             )}
         </section>
     );
