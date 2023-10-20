@@ -112,7 +112,7 @@ const Category = () => {
             </form>
 
             {isLoading ? (
-                <div className={styles.preloader}>Loading...</div>
+                <div className='preloader'>Loading...</div>
             ) : !isSuccess || !items.length ? (
                 <div className={styles.back}>
                     <span>No results</span>
@@ -121,6 +121,7 @@ const Category = () => {
             ) : (
                 <Products title='' products={items} style={{ padding: 0 }} amount={items.length} />
             )}
+
             {!isEnd && (
                 <div className={styles.more}>
                     <button onClick={() => setParams({ ...params, offset: params.offset + params.limit })}>
